@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Shopping Bag Icon -->
+    <path d="M10 8H22C24.2091 8 26 9.79086 26 12V24C26 26.2091 24.2091 28 22 28H10C7.79086 28 6 26.2091 6 24V12C6 9.79086 7.79086 8 10 8Z" fill="#2563EB"/>
+    <path d="M16 8V5C16 3.89543 16.8954 3 18 3H20C21.1046 3 22 3.89543 22 5V8" stroke="#2563EB" stroke-width="2"/>
+</svg> 

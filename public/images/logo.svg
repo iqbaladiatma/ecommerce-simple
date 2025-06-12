@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="50" viewBox="0 0 200 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Shopping Bag Icon -->
+    <path d="M20 15H30C32.2091 15 34 16.7909 34 19V35C34 37.2091 32.2091 39 30 39H20C17.7909 39 16 37.2091 16 35V19C16 16.7909 17.7909 15 20 15Z" fill="#2563EB"/>
+    <path d="M25 15V10C25 7.79086 26.7909 6 29 6H31C33.2091 6 35 7.79086 35 10V15" stroke="#2563EB" stroke-width="2"/>
+    
+    <!-- ShopHub Text -->
+    <text x="45" y="32" font-family="Arial" font-size="24" font-weight="bold" fill="#1E40AF">ShopHub</text>
+</svg> 
