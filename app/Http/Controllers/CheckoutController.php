@@ -97,17 +97,17 @@ class CheckoutController extends Controller
 
             $cart = $this->cartService->get();
             if (empty($cart)) {
-                return redirect()->back()->with('error', 'Keranjang belanja kosong');
+                return response()->json(['error' => 'Keranjang belanja kosong'], 400);
             }
 
             // Validate stock availability
             foreach ($cart as $item) {
                 $product = Product::find($item['id']);
                 if (!$product) {
-                    return redirect()->back()->with('error', 'Produk tidak ditemukan');
+                    return response()->json(['error' => 'Produk tidak ditemukan'], 404);
                 }
                 if ($product->stock < $item['quantity']) {
-                    return redirect()->back()->with('error', "Stok produk {$product->name} tidak mencukupi");
+                    return response()->json(['error' => "Stok produk {$product->name} tidak mencukupi"], 400);
                 }
             }
 
@@ -194,8 +194,10 @@ class CheckoutController extends Controller
 
                 DB::commit();
 
-                // Redirect to Midtrans payment page
-                return redirect($snap->redirect_url);
+                // Return Snap token
+                return response()->json([
+                    'snap_token' => $snap->token
+                ]);
             } catch (Exception $e) {
                 DB::rollBack();
                 throw $e;
@@ -205,7 +207,7 @@ class CheckoutController extends Controller
                 'error' => $e->getMessage(),
                 'user_id' => Auth::id()
             ]);
-            return redirect()->back()->with('error', 'Gagal memproses pembayaran: ' . $e->getMessage());
+            return response()->json(['error' => 'Gagal memproses pembayaran: ' . $e->getMessage()], 500);
         }
     }
 

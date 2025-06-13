@@ -111,20 +111,6 @@
       <div class="p-8">
         <h2 class="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-8">Our Products</h2>
 
-        {{-- Debug Info --}}
-        @if(config('app.debug'))
-        <div class="mb-4 p-4 bg-gray-100 rounded-lg">
-          <p class="text-sm text-gray-600">Debug Info:</p>
-          @if($products instanceof \Illuminate\Pagination\LengthAwarePaginator)
-          <p class="text-sm text-gray-600">Total Products: {{ $products->total() }}</p>
-          <p class="text-sm text-gray-600">Current Page: {{ $products->currentPage() }}</p>
-          <p class="text-sm text-gray-600">Products on this page: {{ $products->count() }}</p>
-          @else
-          <p class="text-sm text-gray-600">Products Count: {{ $products->count() }}</p>
-          @endif
-        </div>
-        @endif
-
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           @forelse($products as $product)
           <div class="group">

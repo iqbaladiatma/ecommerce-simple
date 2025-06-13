@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('category')->nullable();
             $table->enum('status', ['active', 'inactive'])->default('active');
             $table->integer('stock')->default(0);
+            $table->integer('discount')->default(0);
             $table->timestamps();
         });
     }

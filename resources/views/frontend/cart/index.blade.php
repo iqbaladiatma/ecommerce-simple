@@ -146,7 +146,11 @@
             <!-- Payment Button -->
             <form action="{{ route('midtrans.pay') }}" method="POST" class="mt-8">
               @csrf
+              <input type="hidden" name="shipping_address" id="shipping_address_input">
+              <input type="hidden" name="billing_address" id="billing_address_input">
+              <input type="hidden" name="shipping_method" id="shipping_method_input">
               <input type="hidden" name="shipping_cost" id="shipping_cost_input" value="0">
+              <input type="hidden" name="notes" id="notes_input">
               <button type="submit"
                 class="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-4 rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-3 text-lg font-semibold transform hover:-translate-y-0.5">
                 <img src="https://cdn.midtrans.com/images/midtrans-logo.png" alt="Midtrans" class="h-6">
@@ -162,6 +166,7 @@
 </div>
 
 @push('scripts')
+<script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.client_key') }}"></script>
 <script>
   function updateQuantity(productId, action) {
     const input = document.getElementById(`quantity-${productId}`);
@@ -217,6 +222,71 @@
     document.getElementById('shipping-cost').textContent = shippingCost === 0 ? 'Free' : `Rp ${shippingCost.toLocaleString('id-ID')}`;
     document.getElementById('total-amount').textContent = `Rp ${total.toLocaleString('id-ID')}`;
     document.getElementById('shipping_cost_input').value = shippingCost;
+  });
+
+  // Handle form submission
+  document.querySelector('form[action="{{ route("midtrans.pay") }}"]').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    // Get values from form fields
+    const shippingAddress = document.getElementById('shipping_address').value;
+    const billingAddress = document.getElementById('billing_address').value;
+    const shippingMethod = document.getElementById('shipping_method').value;
+    const notes = document.getElementById('notes').value;
+
+    // Validate required fields
+    if (!shippingAddress || !billingAddress) {
+      alert('Please fill in all required fields');
+      return;
+    }
+
+    // Set values to hidden inputs
+    document.getElementById('shipping_address_input').value = shippingAddress;
+    document.getElementById('billing_address_input').value = billingAddress;
+    document.getElementById('shipping_method_input').value = shippingMethod;
+    document.getElementById('notes_input').value = notes;
+
+    // Submit form via AJAX
+    fetch(this.action, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+        },
+        body: JSON.stringify({
+          shipping_address: shippingAddress,
+          billing_address: billingAddress,
+          shipping_method: shippingMethod,
+          shipping_cost: document.getElementById('shipping_cost_input').value,
+          notes: notes
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.snap_token) {
+          window.snap.pay(data.snap_token, {
+            onSuccess: function(result) {
+              window.location.href = '{{ route("midtrans.finish") }}';
+            },
+            onPending: function(result) {
+              window.location.href = '{{ route("midtrans.unfinish") }}';
+            },
+            onError: function(result) {
+              window.location.href = '{{ route("midtrans.error") }}';
+            },
+            onClose: function() {
+              // Handle when customer closes the popup without finishing the payment
+              alert('Anda menutup popup tanpa menyelesaikan pembayaran');
+            }
+          });
+        } else {
+          alert('Gagal memproses pembayaran: ' + (data.error || 'Unknown error'));
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('Gagal memproses pembayaran. Silakan coba lagi.');
+      });
   });
 </script>
 @endpush
